@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Find My Location</title>
+    <title>currentLocation</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
         body {
@@ -71,14 +71,14 @@
             document.getElementById('coordinates').innerHTML = `[${latitude}, ${longitude}]`;
 
             if (!map) {
-                map = L.map('map').setView([latitude, longitude], 19);
+                map = L.map('map').setView([latitude, longitude], 13.5);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     attributionControl: false
                 }).addTo(map);
 
                 marker = L.marker([latitude, longitude]).addTo(map);
             } else {
-                map.setView([latitude, longitude], 19);
+                map.setView([latitude, longitude], 13.5);
                 marker.setLatLng([latitude, longitude]);
             }
         }
