@@ -33,6 +33,15 @@
             margin-top: 20px;
             font-size: 18px;
         }
+        #copyButton {
+            margin-top: 10px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        #ist {
+            margin-top: 10px;
+            font-size: 18px;
+        }
         #map {
             height: 400px;
             width: 100%;
@@ -44,6 +53,8 @@
     <div class="container">
         <button id="findButton" title="Find My Location"></button>
         <div id="coordinates"></div>
+        <div id="ist"></div>
+        <button id="copyButton">Copy</button>
     </div>
     <div id="map"></div>
 
@@ -68,7 +79,8 @@
             const latitude = position.coords.latitude;
             const longitude = position.coords.longitude;
             const accuracy = position.coords.accuracy;
-            document.getElementById('coordinates').innerHTML = `[${latitude}, ${longitude}]`;
+            const coordinatesText = `[${latitude}, ${longitude}]`;
+            document.getElementById('coordinates').innerHTML = coordinatesText;
 
             if (!map) {
                 map = L.map('map').setView([latitude, longitude], 17);
@@ -81,6 +93,10 @@
                 map.setView([latitude, longitude], 17);
                 marker.setLatLng([latitude, longitude]);
             }
+
+            // Display IST
+            const ist = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+            document.getElementById('ist').innerHTML = `IST: ${ist}`;
         }
 
         function showError(error) {
@@ -99,6 +115,24 @@
                     break;
             }
         }
+
+        // Copy coordinates and IST when copy button is clicked
+        document.getElementById('copyButton').addEventListener('click', () => {
+            const coordinatesText = document.getElementById('coordinates').innerText;
+            const istText = document.getElementById('ist').innerText;
+            const textToCopy = coordinatesText + "\n" + istText;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                document.getElementById('copyButton').style.backgroundColor = "green"; // Change button color
+                document.getElementById('copyButton').innerText = "Copied!"; // Change button text
+                setTimeout(() => {
+                    // Reset button after 2 seconds
+                    document.getElementById('copyButton').style.backgroundColor = ""; // Reset button color
+                    document.getElementById('copyButton').innerText = "Copy"; // Reset button text
+                }, 2000);
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+            });
+        });
     </script>
 </body>
 </html>
