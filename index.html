@@ -107,12 +107,12 @@
 
                 // Initialize map if not already initialized
                 if (!map) {
-                    map = L.map('map').setView([midLatitude, midLongitude], 10);
+                    map = L.map('map').setView([midLatitude, midLongitude], 15);
                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                         attributionControl: false
                     }).addTo(map);
                 } else {
-                    map.setView([midLatitude, midLongitude], 10);
+                    map.setView([midLatitude, midLongitude], 15);
                 }
 
                 // Add mobile marker
