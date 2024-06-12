@@ -88,25 +88,6 @@
             const coordinatesText = `[${latitude}, ${longitude}]`;
             document.getElementById('coordinates').innerHTML = `Mobile Location: ${coordinatesText}`;
 
-            if (!map) {
-                map = L.map('map').setView([latitude, longitude], 17);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attributionControl: false
-                }).addTo(map);
-            } else {
-                map.setView([latitude, longitude], 17);
-            }
-
-            if (!mobileMarker) {
-                mobileMarker = L.marker([latitude, longitude]).addTo(map);
-            } else {
-                mobileMarker.setLatLng([latitude, longitude]);
-            }
-
-            // Display IST
-            const ist = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
-            document.getElementById('ist').innerHTML = `Time: ${ist}`;
-
             // Fetch tracker location
             try {
                 const response = await fetch('https://web.onelap.in/api/positions/latest?deviceId=117392', {
@@ -120,11 +101,37 @@
                 const trackerCoordinatesText = `[${trackerLatitude}, ${trackerLongitude}]`;
                 document.getElementById('tracker').innerHTML = `Tracker Location: ${trackerCoordinatesText}`;
 
+                // Calculate midpoint between mobile and tracker locations
+                const midLatitude = (latitude + trackerLatitude) / 2;
+                const midLongitude = (longitude + trackerLongitude) / 2;
+
+                // Initialize map if not already initialized
+                if (!map) {
+                    map = L.map('map').setView([midLatitude, midLongitude], 12);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attributionControl: false
+                    }).addTo(map);
+                } else {
+                    map.setView([midLatitude, midLongitude], 12);
+                }
+
+                // Add mobile marker
+                if (!mobileMarker) {
+                    mobileMarker = L.marker([latitude, longitude]).addTo(map);
+                } else {
+                    mobileMarker.setLatLng([latitude, longitude]);
+                }
+
+                // Add tracker marker
                 if (!trackerMarker) {
                     trackerMarker = L.marker([trackerLatitude, trackerLongitude]).addTo(map);
                 } else {
                     trackerMarker.setLatLng([trackerLatitude, trackerLongitude]);
                 }
+
+                // Display IST
+                const ist = new Date().toLocaleString("en-US", {timeZone: "Asia/Kolkata"});
+                document.getElementById('ist').innerHTML = `Time (IST): ${ist}`;
             } catch (error) {
                 console.error('Error fetching tracker location:', error);
                 document.getElementById('tracker').innerHTML = "Error fetching tracker location";
@@ -153,7 +160,7 @@
             const mobileLocation = document.getElementById('coordinates').innerText;
             const time = document.getElementById('ist').innerText;
             const trackerLocation = document.getElementById('tracker').innerText;
-            const textToCopy = `Time: ${time}\nMobile Location: ${mobileLocation}\nTracker Location: ${trackerLocation}`;
+            const textToCopy = `Time (IST): ${time}\nMobile Location: ${mobileLocation}\nTracker Location: ${trackerLocation}`;
             navigator.clipboard.writeText(textToCopy).then(() => {
                 document.getElementById('copyButton').style.backgroundColor = "green"; // Change button color
                 document.getElementById('copyButton').innerText = "Copied!"; // Change button text
